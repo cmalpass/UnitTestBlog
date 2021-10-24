@@ -1,0 +1,1 @@
+These c# solutions are provided as an example of unit testing and mocking using .net5 and moq. These are simplified examples to demonstrate the concepts.
