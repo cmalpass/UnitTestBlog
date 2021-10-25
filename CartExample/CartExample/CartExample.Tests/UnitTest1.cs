@@ -7,17 +7,18 @@ namespace CartExample.Tests
 	[TestClass]
 	public class UnitTest1
 	{
+
 		[TestMethod]
 		public void TestOrderTotalCalculation()
 		{
 			//now create a mock object that serves in place of our external vendor shipping system
-			var paymentServiceMock = new Mock<IShipper>();
+			var shippingServiceMock = new Mock<IShipper>();
 
 			//then define the substitute behaviors
 			//here we are telling our mock that any request for CalculateShippingCost can accept
 			//any parameters that match the expected types and we will always have it return 500
 			//this can be adjusted as desired and set to reflect specific input values, as well
-			paymentServiceMock
+			shippingServiceMock
 				.Setup(x => x.CalculateShippingCost(
 					It.IsAny<double>(),
 					It.IsAny<string>()))
@@ -54,8 +55,14 @@ namespace CartExample.Tests
 				Address = "123 Maple Street, Anytown, NH 43432, USA"
 			};
 
+			//calculate the subtotal of all items in the order
+			var orderItemTotal = order.GetItemTotal();
 
+			//calculate the order total with shipping included
+			var orderTotal = order.GetOrderTotal(shippingServiceMock.Object);
 
+			//now we ensure that the result from the GetOrderTotal method matches what we manually defined in the mock setup in the beginning of the test
+			Assert.AreEqual(45.98, orderTotal);
 		}
 	}
 }
