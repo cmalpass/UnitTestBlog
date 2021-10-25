@@ -8,24 +8,10 @@ namespace CartExample.Tests
 	public class UnitTest1
 	{
 
-		[TestMethod]
-		public void TestOrderTotalCalculation()
+		private Order GenerateSampleOrder()
 		{
-			//now create a mock object that serves in place of our external vendor shipping system
-			var shippingServiceMock = new Mock<IShipper>();
-
-			//then define the substitute behaviors
-			//here we are telling our mock that any request for CalculateShippingCost can accept
-			//any parameters that match the expected types and we will always have it return 500
-			//this can be adjusted as desired and set to reflect specific input values, as well
-			shippingServiceMock
-				.Setup(x => x.CalculateShippingCost(
-					It.IsAny<double>(),
-					It.IsAny<string>()))
-				.Returns(45.98);
-
 			//populate a sample order object for our test use
-			var order = new Order
+			return new Order
 			{
 
 				OrderItems = new System.Collections.Generic.List<OrderItem>
@@ -54,6 +40,26 @@ namespace CartExample.Tests
 				},
 				Address = "123 Maple Street, Anytown, NH 43432, USA"
 			};
+		}
+
+		[TestMethod]
+		public void TestOrderTotalCalculation()
+		{
+			//now create a mock object that serves in place of our external vendor shipping system
+			var shippingServiceMock = new Mock<IShipper>();
+
+			//then define the substitute behaviors
+			//here we are telling our mock that any request for CalculateShippingCost can accept
+			//any parameters that match the expected data types and we will always have it return 45.98
+			//this can be adjusted as desired and set to reflect specific input values, as well
+			shippingServiceMock
+				.Setup(x => x.CalculateShippingCost(
+					It.IsAny<double>(),
+					It.IsAny<string>()))
+				.Returns(45.98);
+
+			//retrieve a sample order from our manually defined order data
+			var order = GenerateSampleOrder();
 
 			//calculate the subtotal of all items in the order
 			var orderItemTotal = order.GetItemTotal();
